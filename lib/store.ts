@@ -2,10 +2,16 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import type { TrackedItem, Alert, AppSettings, ItemStatus } from "./types"
 
+interface AddItemResult {
+  id: string | null
+  isDuplicate: boolean
+}
+
 interface AppState {
   // Items
   items: TrackedItem[]
   addItem: (item: Omit<TrackedItem, "id">) => string
+  addItemWithDedupe: (item: Omit<TrackedItem, "id">) => AddItemResult
   updateItem: (id: string, updates: Partial<TrackedItem>) => void
   deleteItem: (id: string) => void
   getItem: (id: string) => TrackedItem | undefined
@@ -30,6 +36,7 @@ interface AppState {
 const defaultSettings: AppSettings = {
   adjustmentWindowDays: 30,
   darkMode: "system",
+  costcoSyncEnabled: true,
 }
 
 function generateId(): string {
@@ -47,6 +54,21 @@ export const useAppStore = create<AppState>()(
         const newItem: TrackedItem = { ...item, id }
         set((state) => ({ items: [...state.items, newItem] }))
         return id
+      },
+
+      addItemWithDedupe: (item) => {
+        const existing = get().items.find(
+          (i) =>
+            i.itemNumber === item.itemNumber &&
+            i.purchaseDate === item.purchaseDate
+        )
+        if (existing) {
+          return { id: null, isDuplicate: true }
+        }
+        const id = generateId()
+        const newItem: TrackedItem = { ...item, id }
+        set((state) => ({ items: [...state.items, newItem] }))
+        return { id, isDuplicate: false }
       },
 
       updateItem: (id, updates) => {

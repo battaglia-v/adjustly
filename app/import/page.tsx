@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { AppShell } from "@/components/layout"
 import { Button } from "@/components/ui/button"
+import { CostcoSyncCard } from "@/components/ui/costco-sync-card"
 import { useAppStore } from "@/lib/store"
 
 interface FormData {
@@ -217,6 +218,9 @@ export default function ImportPage() {
               </div>
             </div>
           </button>
+
+          {/* Costco Sync Beta */}
+          <CostcoSyncCard />
         </div>
       </AppShell>
     )

@@ -1,12 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { AppShell } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { BottomSheetModal } from "@/components/ui/bottom-sheet-modal"
 import { useAppStore } from "@/lib/store"
 
+const COSTCO_SYNC_AVAILABLE = process.env.NEXT_PUBLIC_ENABLE_COSTCO_SYNC_BETA === "true"
+
 export default function SettingsPage() {
+  const router = useRouter()
   const { settings, updateSettings, exportData, wipeAllData, items } = useAppStore()
   const [wipeConfirm, setWipeConfirm] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -97,6 +101,44 @@ export default function SettingsPage() {
             ))}
           </div>
         </section>
+
+        {/* Costco Sync (Beta) */}
+        {COSTCO_SYNC_AVAILABLE && (
+          <section className="bg-card rounded-[16px] p-4 border border-border space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-medium">Costco Sync</h3>
+                <span className="px-1.5 py-0.5 text-[10px] font-medium bg-warning/20 text-warning rounded">
+                  Beta
+                </span>
+              </div>
+              <button
+                onClick={() => updateSettings({ costcoSyncEnabled: !settings.costcoSyncEnabled })}
+                className={`w-12 h-7 rounded-full transition-colors relative ${
+                  settings.costcoSyncEnabled ? "bg-primary" : "bg-secondary"
+                }`}
+              >
+                <span
+                  className={`absolute w-5 h-5 bg-white rounded-full top-1 transition-transform ${
+                    settings.costcoSyncEnabled ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Import receipts from Costco.com by signing in on their site and sharing a receipt PDF or screenshot.
+            </p>
+            {settings.costcoSyncEnabled && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => router.push("/import/costco-sync")}
+              >
+                Sync now
+              </Button>
+            )}
+          </section>
+        )}
 
         {/* Data Management */}
         <section className="bg-card rounded-[16px] p-4 border border-border space-y-3">

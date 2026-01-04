@@ -44,6 +44,7 @@ export interface Alert {
 export interface AppSettings {
   adjustmentWindowDays: number
   darkMode: "system" | "light" | "dark"
+  costcoSyncEnabled: boolean
 }
 
 // Filter/sort options for Tracked page

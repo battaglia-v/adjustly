@@ -7,6 +7,7 @@ import { ItemCard } from "@/components/ui/item-card"
 import { FilterChips } from "@/components/ui/filter-chips"
 import { EmptyState, ReceiptIcon } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
+import { CostcoSyncCard } from "@/components/ui/costco-sync-card"
 import { useAppStore, computeDaysLeft, computeStatus, computePotentialRefund } from "@/lib/store"
 import { getSampleItems } from "@/lib/sample-data"
 import type { FilterOption, SortOption } from "@/lib/types"
@@ -93,6 +94,12 @@ export default function TrackedPage() {
             onClick: () => router.push("/import?manual=true"),
           }}
         />
+
+        {/* Costco Sync CTA */}
+        <div className="mt-4 px-6">
+          <CostcoSyncCard />
+        </div>
+
         <div className="mt-8 pt-6 border-t border-border">
           <p className="text-xs text-muted-foreground text-center mb-3">
             Testing the app?
