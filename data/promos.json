@@ -1,0 +1,23 @@
+[
+  {
+    "id": "promo-2026-01",
+    "name": "January Savings",
+    "start": "2026-01-01",
+    "end": "2026-01-31",
+    "items": [
+      { "item_number": "1234567", "promo_unit_price": 14.99 },
+      { "item_number": "7654321", "promo_unit_price": 24.99 },
+      { "item_number": "1111111", "promo_unit_price": 9.99 }
+    ]
+  },
+  {
+    "id": "promo-2025-12",
+    "name": "December Holiday Deals",
+    "start": "2025-12-01",
+    "end": "2025-12-31",
+    "items": [
+      { "item_number": "2222222", "promo_unit_price": 19.99 },
+      { "item_number": "3333333", "promo_unit_price": 29.99 }
+    ]
+  }
+]
