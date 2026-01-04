@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useRef, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { AppShell } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { useAppStore } from "@/lib/store"
@@ -24,14 +24,9 @@ const initialForm: FormData = {
   warehouse: "",
 }
 
-function ImportPageContent() {
+export default function ImportPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const showManual = searchParams.get("manual") === "true"
-
-  const [mode, setMode] = useState<"choose" | "manual" | "upload">(
-    showManual ? "manual" : "choose"
-  )
+  const [mode, setMode] = useState<"choose" | "manual">("choose")
   const [form, setForm] = useState<FormData>(initialForm)
   const [receiptImage, setReceiptImage] = useState<string | null>(null)
   const [errors, setErrors] = useState<Partial<FormData>>({})
@@ -39,11 +34,18 @@ function ImportPageContent() {
 
   const addItem = useAppStore((s) => s.addItem)
 
+  // Check URL params after mount (avoids Suspense requirement)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("manual") === "true") {
+      setMode("manual")
+    }
+  }, [])
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Compress and convert to base64
     const reader = new FileReader()
     reader.onload = (ev) => {
       const img = new Image()
@@ -64,7 +66,7 @@ function ImportPageContent() {
         ctx?.drawImage(img, 0, 0, width, height)
         const compressed = canvas.toDataURL("image/jpeg", 0.7)
         setReceiptImage(compressed)
-        setMode("manual") // After uploading, go to manual entry
+        setMode("manual")
       }
       img.src = ev.target?.result as string
     }
@@ -127,7 +129,6 @@ function ImportPageContent() {
       status: "tracking",
     })
 
-    // Reset form but keep date and warehouse
     setForm({
       ...initialForm,
       purchaseDate: form.purchaseDate,
@@ -369,21 +370,5 @@ function ImportPageContent() {
         </div>
       </div>
     </AppShell>
-  )
-}
-
-export default function ImportPage() {
-  return (
-    <Suspense
-      fallback={
-        <AppShell title="Import">
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading...</p>
-          </div>
-        </AppShell>
-      }
-    >
-      <ImportPageContent />
-    </Suspense>
   )
 }

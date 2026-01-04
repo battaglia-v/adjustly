@@ -6,12 +6,14 @@ import { AppShell } from "@/components/layout"
 import { ItemCard } from "@/components/ui/item-card"
 import { FilterChips } from "@/components/ui/filter-chips"
 import { EmptyState, ReceiptIcon } from "@/components/ui/empty-state"
+import { Button } from "@/components/ui/button"
 import { useAppStore, computeDaysLeft, computeStatus, computePotentialRefund } from "@/lib/store"
-import type { FilterOption, SortOption, TrackedItem } from "@/lib/types"
+import { getSampleItems } from "@/lib/sample-data"
+import type { FilterOption, SortOption } from "@/lib/types"
 
 export default function TrackedPage() {
   const router = useRouter()
-  const { items, settings } = useAppStore()
+  const { items, settings, addItem } = useAppStore()
   const [filter, setFilter] = useState<FilterOption>("all")
   const [sort, setSort] = useState<SortOption>("expiring")
 
@@ -70,6 +72,11 @@ export default function TrackedPage() {
     }
   }, [enrichedItems])
 
+  const loadSampleData = () => {
+    const samples = getSampleItems()
+    samples.forEach((item) => addItem(item))
+  }
+
   if (items.length === 0) {
     return (
       <AppShell title="Tracked">
@@ -86,6 +93,19 @@ export default function TrackedPage() {
             onClick: () => router.push("/import?manual=true"),
           }}
         />
+        <div className="mt-8 pt-6 border-t border-border">
+          <p className="text-xs text-muted-foreground text-center mb-3">
+            Testing the app?
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={loadSampleData}
+            className="w-full text-primary"
+          >
+            Load sample data
+          </Button>
+        </div>
       </AppShell>
     )
   }

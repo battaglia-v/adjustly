@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { useAppStore } from "@/lib/store"
 
 const navItems = [
   {
@@ -49,6 +50,7 @@ const navItems = [
   {
     href: "/alerts",
     label: "Alerts",
+    showBadge: true,
     icon: (active: boolean) => (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -90,6 +92,7 @@ const navItems = [
 
 function BottomNav() {
   const pathname = usePathname()
+  const unreadCount = useAppStore((s) => s.unreadCount())
 
   return (
     <nav
@@ -102,18 +105,26 @@ function BottomNav() {
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href
+          const showBadge = item.showBadge && unreadCount > 0
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
                 "flex flex-col items-center justify-center gap-1",
-                "w-16 h-full transition-colors",
-                "min-h-[44px]", // tap target
+                "w-16 h-full transition-colors relative",
+                "min-h-[44px]",
                 isActive ? "text-primary" : "text-muted-foreground"
               )}
             >
-              {item.icon(isActive)}
+              <div className="relative">
+                {item.icon(isActive)}
+                {showBadge && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-danger text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+              </div>
               <span className="text-xs font-medium">{item.label}</span>
             </Link>
           )
