@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 
+// Feature flag for Costco Sync Beta
 const COSTCO_SYNC_ENABLED = process.env.NEXT_PUBLIC_ENABLE_COSTCO_SYNC_BETA === "true"
 
 export function CostcoSyncCard() {
